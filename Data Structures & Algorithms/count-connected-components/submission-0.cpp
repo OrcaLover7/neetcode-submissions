@@ -1,0 +1,35 @@
+class Solution {
+public:
+    void make_set(int n, vector<int>& parent, vector<int>& size){
+        for(int i = 0; i < n; i++){
+            parent[i] = i;
+            size[i] = i;
+        }
+    }
+
+    int find_set(int x, vector<int>& parent){
+        if(parent[x] != x) return parent[x] = find_set(parent[x], parent);
+        return x;
+    }
+
+    int union_sets(int x, int y, vector<int>& parent, vector<int>& size){
+        x = find_set(x, parent), y = find_set(y, parent);
+        if(x == y) return x;
+        if(size[x] < size[y]) swap(x, y);
+        parent[y] = x;
+        size[x] += size[y];
+        return x;
+    }
+
+    int countComponents(int n, vector<vector<int>>& edges) {
+        vector<int> parent(n, 0), size(n, 0);
+        make_set(n, parent, size);
+
+        unordered_set<int> component_parents;
+
+        for(auto& edge : edges) component_parents.insert(union_sets(edge[0], edge[1], parent, size));
+
+        return component_parents.size() - 1;
+        
+    }
+};
